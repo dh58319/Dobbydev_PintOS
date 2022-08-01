@@ -92,7 +92,14 @@ struct thread
 	enum thread_status status; /* Thread state. */
 	char name[16];			   /* Name (for debugging purposes). */
 	int priority;			   /* Priority. */
+	int base_priority;
 
+	struct lock *wait_on_lock;
+
+	struct list donations;
+	struct list_elem donation_elem;
+
+	struct list_elem allelem;
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem; /* List element. */
 
@@ -150,7 +157,10 @@ void thread_sleep(int64_t ticks); // running thread to sleep state
 void thread_awake(int64_t ticks); // awake thread from sleep_list
 int64_t get_next_tick(void);
 
-void test_max_priority(void);															   // compare current thread and highest priority thread
+// compare current thread and highest priority thread
 bool cmp_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED); // compare thread priority
-
+void thread_preempt(void);
+void remove_with_lock(struct thread *cur, struct lock *lock);
+bool thread_compare_priority(const struct thread *a, const struct thread *b);
+void refresh_priority(struct thread *cur, int *priority);
 #endif /* threads/thread.h */

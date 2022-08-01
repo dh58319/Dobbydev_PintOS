@@ -406,30 +406,21 @@ void refresh_priority(struct thread *cur, int *priority)
 {
 	struct list_elem *e;
 
-	if (thread_mlfqs)
-		NOT_REACHED();
-
-	// 우선순위 갱신
 	if (*priority <= cur->priority)
 		*priority = cur->priority;
 	else
-		// 갱신될 여지가 없습니다.
 		return;
 
 	for (e = list_begin(&cur->donations); e != list_end(&cur->donations);
 		 e = list_next(e))
 	{
 		struct thread *t = list_entry(e, struct thread, donation_elem);
-		// 재귀적으로 계속 수행합니다.
 		refresh_priority(t, priority);
 	}
 }
 void remove_with_lock(struct thread *cur, struct lock *lock)
 {
 	struct list_elem *e;
-
-	if (thread_mlfqs)
-		NOT_REACHED();
 
 	for (e = list_begin(&cur->donations); e != list_end(&cur->donations);)
 	{
